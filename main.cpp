@@ -3,6 +3,7 @@
 #include <limits>
 #include <String>
 #include <fstream>
+#include <iomanip>
 
 using namespace std;
 
@@ -98,6 +99,34 @@ void choices() {
     cout << "5. Delete an Expense" << endl;
     cout << "6. Summary Report" << endl;
     cout << "7. Exit" << endl;
+}
+
+void searchExpenses() {
+   if (expenses.empty()) {
+        cout << "\nNo expenses available to search.\n";
+        return;
+    }
+
+    string searchCategory;
+    cout << "\nEnter Category to filter by: ";
+    cin >> searchCategory;
+
+    bool found = false;
+    cout << "\n--- Filtered Expenses (" << searchCategory << ") ---\n";
+    for (const auto& exp : expenses) {
+        if (exp.category == searchCategory) {
+            cout << "\nID: " << exp.expenseID
+                 << "\nDate: " << exp.date
+                 << "\nCategory: " << exp.category
+                 << "\nAmount: $" << fixed << setprecision(2) << exp.amount
+                 << "\nDescription: " << exp.description
+                 << "\n---------------------\n";
+            found = true;
+        }
+    }
+    if (!found) {
+        cout << "No expenses found matching that category.\n";
+    }
 }
 
 int main() {
