@@ -160,6 +160,62 @@ void searchExpenses() {
     }
 }
 
+void updateExpense() {
+    if (expenses.empty()) {
+        cout << "\nNo expenses available to update.\n";
+        return;
+    }
+
+    int idToUpdate;
+    cout << "\nEnter the ID of the expense to update: ";
+    cin >> idToUpdate;
+
+    bool found = false;
+    for (auto& exp : expenses) {
+        if (exp.expenseID == idToUpdate) {
+            found = true;
+
+            cout << "\n--- Update Expense ---\n";
+            cout << "Current Date: " << exp.date << "\nEnter new Date [YYYY-MM-DD] (or press Enter to keep current): ";
+            string newDate;
+            cin.ignore();
+            getline(cin, newDate);
+            if (!newDate.empty()) {
+                exp.date = newDate;
+            }
+
+            cout << "Current Category: " << exp.category << "\nEnter new Category (or press Enter to keep current): ";
+            string newCategory;
+            getline(cin, newCategory);
+            if (!newCategory.empty()) {
+                exp.category = newCategory;
+            }
+
+            cout << "Current Amount: " << exp.amount << "\nEnter new Amount (or press Enter to keep current): ";
+            string newAmountStr;
+            getline(cin, newAmountStr);
+            if (!newAmountStr.empty()) {
+                exp.amount = stod(newAmountStr);
+            }
+
+            cout << "Current Description: " << exp.description << "\nEnter new Description (or press Enter to keep current): ";
+            string newDescription;
+            getline(cin, newDescription);
+            if (!newDescription.empty()) {
+                exp.description = newDescription;
+            }
+
+            saveExpenses(); // Save updated expenses to file
+            cout << "\nExpense Successfully Updated!\n";
+            break;
+        }
+    }
+
+    if (!found) {
+        cout << "\nExpense with ID " << idToUpdate << " not found.\n";
+    }
+}
+
 int main() {
 
     // ! Load saved expenses before starting the program
@@ -189,8 +245,7 @@ int main() {
                 break;
 
             case 4:
-                // TODO: Implement Update Expense feature
-                cout << "\n[Feature coming soon: Update an Expense]\n";
+                 updateExpense();
                 break;
 
             case 5:
