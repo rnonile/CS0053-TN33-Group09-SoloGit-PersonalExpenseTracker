@@ -152,6 +152,7 @@ int main() {
 
             case 3:
                 cout << "\n[Feature coming soon: Search / Filter Expenses]\n";
+                searchExpenses();
                 break;
 
             case 4:
