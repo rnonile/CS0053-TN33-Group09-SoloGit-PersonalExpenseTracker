@@ -1,4 +1,6 @@
-3 2026-06-05 foods 45
-lunch
-4 2026-09-01 medical 47
-medicine
+5 2026-11-01 foods 46
+update from game to foods
+6 2026-04-13 water 78
+pool
+7 2026-03-04 electric 68
+bill
