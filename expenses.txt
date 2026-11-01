@@ -1,0 +1,4 @@
+3 2026-06-05 foods 45
+lunch
+4 2026-09-01 medical 47
+medicine
