@@ -1,12 +1,19 @@
+
+// ! Important note (Red)
+// ? Question or reminder (Blue)
+// TODO: Task to be completed (Orange)
+// * Highlighted information (Green)
+
 #include <iostream>
 #include <vector>
 #include <limits>
-#include <String>
+#include <string>
 #include <fstream>
 #include <iomanip>
 
 using namespace std;
 
+// * Structure to store expense details
 struct Expense {
     int expenseID;
     string date;
@@ -15,10 +22,11 @@ struct Expense {
     string description;
 };
 
-// Global vector for storing expenses
+// * Global vector for storing all expenses
 vector<Expense> expenses;
 
-void saveExpenses(){
+// TODO: Improve file error handling
+void saveExpenses() {
     ofstream out("expenses.txt");
 
     for (const auto& exp : expenses) {
@@ -30,19 +38,23 @@ void saveExpenses(){
     }
 }
 
-// Load all expenses from expenses.txt (if it exists)
+// * Load all expenses from the text file
 void loadExpenses() {
     ifstream in("expenses.txt");
     Expense exp;
 
     while (in >> exp.expenseID >> exp.date >> exp.category >> exp.amount) {
-        in.ignore();                   // skip the newline after amount
-        getline(in, exp.description);  // description is the whole next line
+        in.ignore();
+
+        // ? Why use getline() here?
+        // * Because descriptions may contain spaces.
+        getline(in, exp.description);
+
         expenses.push_back(exp);
     }
 }
 
-
+// ! Main function for adding a new expense record
 void addExpense() {
     Expense exp;
 
@@ -55,25 +67,32 @@ void addExpense() {
     cin >> exp.date;
 
     cout << "Enter Category: ";
-    cin >> exp.category;
+    cin >> ws;
+    getline(cin, exp.category);
 
     cout << "Enter Amount: ";
     cin >> exp.amount;
 
+    // * Clear input buffer before reading description
     cin.ignore();
 
     cout << "Enter Description: ";
     getline(cin, exp.description);
 
     expenses.push_back(exp);
-    saveExpenses();   // Save to file
+
+    // ! Automatically save after adding
+    saveExpenses();
 
     cout << "\nExpense Successfully Added!\n";
 }
 
+// * Display all recorded expenses
 void viewExpenses() {
     if (expenses.empty()) {
-        cout << "\nExpenses no found.\n";
+
+        // ! No records available
+        cout << "\nExpenses not found.\n";
         return;
     }
 
@@ -89,6 +108,7 @@ void viewExpenses() {
     }
 }
 
+// * Display menu options
 void choices() {
     cout << "\n=== Personal Expense Tracker ===" << endl;
     cout << "Expense Tracker Menu:" << endl;
@@ -101,30 +121,41 @@ void choices() {
     cout << "7. Exit" << endl;
 }
 
+// ! Search expenses by category
 void searchExpenses() {
-   if (expenses.empty()) {
+
+    if (expenses.empty()) {
         cout << "\nNo expenses available to search.\n";
         return;
     }
 
     string searchCategory;
+
     cout << "\nEnter Category to filter by: ";
     cin >> searchCategory;
 
     bool found = false;
+
     cout << "\n--- Filtered Expenses (" << searchCategory << ") ---\n";
+
     for (const auto& exp : expenses) {
+
         if (exp.category == searchCategory) {
+
             cout << "\nID: " << exp.expenseID
                  << "\nDate: " << exp.date
                  << "\nCategory: " << exp.category
                  << "\nAmount: $" << fixed << setprecision(2) << exp.amount
                  << "\nDescription: " << exp.description
                  << "\n---------------------\n";
+
             found = true;
         }
     }
+
     if (!found) {
+
+        // ! Category does not exist in records
         cout << "No expenses found matching that category.\n";
     }
 }
@@ -187,6 +218,7 @@ void updateExpense() {
 
 int main() {
 
+    // ! Load saved expenses before starting the program
     loadExpenses();
 
     int choice = 0;
@@ -213,14 +245,16 @@ int main() {
                 break;
 
             case 4:
-                updateExpense();
+                 updateExpense();
                 break;
 
             case 5:
+                // TODO: Implement Delete Expense feature
                 cout << "\n[Feature coming soon: Delete an Expense]\n";
                 break;
 
             case 6:
+                // TODO: Implement Summary Report feature
                 cout << "\n[Feature coming soon: Summary Report]\n";
                 break;
 
@@ -229,6 +263,8 @@ int main() {
                 break;
 
             default:
+
+                // ! Handle invalid user input
                 cout << "\nInvalid choice! Please try again.\n";
 
                 cin.clear();
