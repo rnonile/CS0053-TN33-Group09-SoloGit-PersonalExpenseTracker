@@ -216,6 +216,59 @@ void updateExpense() {
     }
 }
 
+// ! Delete an expense using its ID
+void deleteExpense() {
+
+    if (expenses.empty()) {
+        cout << "\nNo expenses available to delete.\n";
+        return;
+    }
+
+    int idToDelete;
+    cout << "\nEnter the ID of the expense to delete: ";
+    cin >> idToDelete;
+
+    bool found = false;
+
+    for (auto it = expenses.begin(); it != expenses.end(); ++it) {
+
+        if (it->expenseID == idToDelete) {
+
+            cout << "\nExpense Found:";
+            cout << "\nID: " << it->expenseID
+                 << "\nDate: " << it->date
+                 << "\nCategory: " << it->category
+                 << "\nAmount: " << it->amount
+                 << "\nDescription: " << it->description
+                 << "\n";
+
+            char confirm;
+            cout << "\nAre you sure you want to delete this expense? (Y/N): ";
+            cin >> confirm;
+
+            if (confirm == 'Y' || confirm == 'y') {
+
+                expenses.erase(it);
+
+                // * Save changes to file after deletion
+                saveExpenses();
+
+                cout << "\nExpense Successfully Deleted!\n";
+            }
+            else {
+                cout << "\nDeletion cancelled.\n";
+            }
+
+            found = true;
+            break;
+        }
+    }
+
+    if (!found) {
+        cout << "\nExpense with ID " << idToDelete << " not found.\n";
+    }
+}
+
 int main() {
 
     // ! Load saved expenses before starting the program
@@ -248,9 +301,8 @@ int main() {
                  updateExpense();
                 break;
 
-            case 5:
-                // TODO: Implement Delete Expense feature
-                cout << "\n[Feature coming soon: Delete an Expense]\n";
+              case 5:
+                deleteExpense();
                 break;
 
             case 6:
