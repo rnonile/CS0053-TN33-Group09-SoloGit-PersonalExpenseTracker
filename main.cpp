@@ -10,6 +10,7 @@
 #include <string>
 #include <fstream>
 #include <iomanip>
+#include <map>
 
 using namespace std;
 
@@ -268,7 +269,67 @@ void deleteExpense() {
         cout << "\nExpense with ID " << idToDelete << " not found.\n";
     }
 }
+// * Generate summary report
+void summaryReport() {
 
+    if (expenses.empty()) {
+        cout << "\nNo expenses available.\n";
+        return;
+    }
+
+    double total = 0;
+    double highest = expenses[0].amount;
+    double lowest = expenses[0].amount;
+
+    map<string, double> categoryTotals;
+
+    for (const auto& exp : expenses) {
+
+        total += exp.amount;
+
+        categoryTotals[exp.category] += exp.amount;
+
+        if (exp.amount > highest)
+            highest = exp.amount;
+
+        if (exp.amount < lowest)
+            lowest = exp.amount;
+    }
+
+    double average = total / expenses.size();
+
+    cout << "\n====================================";
+    cout << "\n SUMMARY REPORT";
+    cout << "\n====================================";
+
+    cout << "\nTotal Expenses Recorded : "
+         << expenses.size();
+
+    cout << fixed << setprecision(2);
+
+    cout << "\nTotal Amount Spent : P"
+         << total;
+
+    cout << "\nAverage Expense Amount : P"
+         << average;
+
+    cout << "\nHighest Expense : P"
+         << highest;
+
+    cout << "\nLowest Expense : P"
+         << lowest;
+
+    cout << "\n\n--- Expenses by Category ---\n";
+
+    for (const auto& category : categoryTotals) {
+        cout << category.first
+             << " : P"
+             << category.second
+             << endl;
+    }
+
+    cout << "====================================\n";
+}
 int main() {
 
     // ! Load saved expenses before starting the program
@@ -305,9 +366,8 @@ int main() {
                 deleteExpense();
                 break;
 
-            case 6:
-                // TODO: Implement Summary Report feature
-                cout << "\n[Feature coming soon: Summary Report]\n";
+              case 6:
+                summaryReport();
                 break;
 
             case 7:
