@@ -10,7 +10,10 @@
 #include <string>
 #include <fstream>
 #include <iomanip>
+<<<<<<< HEAD
 #include <cctype>
+=======
+>>>>>>> origin/main
 #include <map>
 
 using namespace std;
@@ -61,23 +64,31 @@ void loadExpenses() {
             pos3 != string::npos && pos4 != string::npos) {
             
             Expense exp;
+<<<<<<< HEAD
             try {
+=======
+>>>>>>> origin/main
             exp.expenseID = stoi(line.substr(0, pos1));
             exp.date = line.substr(pos1 + 1, pos2 - pos1 - 1);
             exp.category = line.substr(pos2 + 1, pos3 - pos2 - 1);
             exp.amount = stod(line.substr(pos3 + 1, pos4 - pos3 - 1));
             exp.description = line.substr(pos4 + 1);
+<<<<<<< HEAD
             }
             catch (const exception&) {
             cout << "Skipping invalid record: " << line << endl;
             continue;
 }
+=======
+
+>>>>>>> origin/main
             expenses.push_back(exp);
         }
     }
     in.close();
 }
 
+<<<<<<< HEAD
 // * Check if an expense ID is already used
 bool idExists(int id) {
     for (const auto& e : expenses)
@@ -104,6 +115,9 @@ bool validDate(const string& d) {
 }
 
 // ! Main function for adding a new expense record (with input validation)
+=======
+// ! Main function for adding a new expense record
+>>>>>>> origin/main
 void addExpense() {
     Expense exp;
 
@@ -129,11 +143,14 @@ void addExpense() {
     cout << "Enter Category: ";
     cin >> ws;
     getline(cin, exp.category);
+<<<<<<< HEAD
     while (exp.category.empty() || exp.category.find('|') != string::npos) {
         // ! '|' would break expenses.txt because it separates the fields
         cout << "Category can't be empty or contain '|'. Try again: ";
         getline(cin, exp.category);
     }
+=======
+>>>>>>> origin/main
 
     // * Validate amount: must be a number greater than 0
     cout << "Enter Amount (P): ";
@@ -143,8 +160,13 @@ void addExpense() {
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
 
+<<<<<<< HEAD
     // * Clear the whole input buffer before reading description
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
+=======
+    // * Clear input buffer before reading description
+    cin.ignore();
+>>>>>>> origin/main
 
     // * Validate description: no '|' allowed
     cout << "Enter Description: ";
@@ -220,7 +242,11 @@ void searchExpenses() {
             cout << "\nID: " << exp.expenseID
                  << "\nDate: " << exp.date
                  << "\nCategory: " << exp.category
+<<<<<<< HEAD
                  << "\nAmount: P" << fixed << setprecision(2) << exp.amount
+=======
+                 << "\nAmount: $" << fixed << setprecision(2) << exp.amount
+>>>>>>> origin/main
                  << "\nDescription: " << exp.description
                  << "\n---------------------\n";
 
@@ -313,7 +339,11 @@ void deleteExpense() {
             cout << "\nID: " << it->expenseID
                  << "\nDate: " << it->date
                  << "\nCategory: " << it->category
+<<<<<<< HEAD
                  << "\nAmount: P" << fixed << setprecision(2) << it->amount
+=======
+                 << "\nAmount: " << it->amount
+>>>>>>> origin/main
                  << "\nDescription: " << it->description
                  << "\n";
 
