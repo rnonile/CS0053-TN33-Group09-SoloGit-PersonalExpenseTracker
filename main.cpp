@@ -10,6 +10,7 @@
 #include <string>
 #include <fstream>
 #include <iomanip>
+#include <cctype>
 #include <map>
 
 using namespace std;
@@ -60,42 +61,98 @@ void loadExpenses() {
             pos3 != string::npos && pos4 != string::npos) {
             
             Expense exp;
+            try {
             exp.expenseID = stoi(line.substr(0, pos1));
             exp.date = line.substr(pos1 + 1, pos2 - pos1 - 1);
             exp.category = line.substr(pos2 + 1, pos3 - pos2 - 1);
             exp.amount = stod(line.substr(pos3 + 1, pos4 - pos3 - 1));
             exp.description = line.substr(pos4 + 1);
-
+            }
+            catch (const exception&) {
+            cout << "Skipping invalid record: " << line << endl;
+            continue;
+}
             expenses.push_back(exp);
         }
     }
     in.close();
 }
 
-// ! Main function for adding a new expense record
+// * Check if an expense ID is already used
+bool idExists(int id) {
+    for (const auto& e : expenses)
+        if (e.expenseID == id) return true;
+    return false;
+}
+
+// * Validate date format YYYY-MM-DD (digits, dashes, valid month/day range)
+bool validDate(const string& d) {
+    // ! Must be exactly 10 characters with dashes at positions 4 and 7
+    if (d.size() != 10 || d[4] != '-' || d[7] != '-') return false;
+
+    // ? Are all the other characters digits?
+    for (int i = 0; i < 10; i++) {
+        if (i == 4 || i == 7) continue;
+        if (!isdigit(static_cast<unsigned char>(d[i]))) return false;
+    }
+
+    int month = stoi(d.substr(5, 2));
+    int day = stoi(d.substr(8, 2));
+
+    // TODO: Check the exact days per month (e.g. Feb 30) and leap years
+    return month >= 1 && month <= 12 && day >= 1 && day <= 31;
+}
+
+// ! Main function for adding a new expense record (with input validation)
 void addExpense() {
     Expense exp;
 
     cout << "\n--- Add Expense ---\n";
 
+    // * Validate ID: must be a number, positive, and unique
     cout << "Enter ID: ";
-    cin >> exp.expenseID;
+    while (!(cin >> exp.expenseID) || exp.expenseID <= 0 || idExists(exp.expenseID)) {
+        cout << "Invalid or duplicate ID. Enter a unique positive number: ";
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
 
+    // * Validate date: must follow YYYY-MM-DD
     cout << "Enter Date [YYYY-MM-DD]: ";
     cin >> exp.date;
+    while (!validDate(exp.date)) {
+        cout << "Invalid date. Use YYYY-MM-DD: ";
+        cin >> exp.date;
+    }
 
+    // * Validate category: not empty and no '|' (the file delimiter)
     cout << "Enter Category: ";
     cin >> ws;
     getline(cin, exp.category);
+    while (exp.category.empty() || exp.category.find('|') != string::npos) {
+        // ! '|' would break expenses.txt because it separates the fields
+        cout << "Category can't be empty or contain '|'. Try again: ";
+        getline(cin, exp.category);
+    }
 
-    cout << "Enter Amount: ";
-    cin >> exp.amount;
+    // * Validate amount: must be a number greater than 0
+    cout << "Enter Amount (P): ";
+    while (!(cin >> exp.amount) || exp.amount <= 0) {
+        cout << "Invalid amount. Enter a number greater than 0: ";
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
 
-    // * Clear input buffer before reading description
-    cin.ignore();
+    // * Clear the whole input buffer before reading description
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
+    // * Validate description: no '|' allowed
     cout << "Enter Description: ";
     getline(cin, exp.description);
+    while (exp.description.find('|') != string::npos) {
+        cout << "Description can't contain '|'. Try again: ";
+        getline(cin, exp.description);
+    }
 
     expenses.push_back(exp);
 
@@ -120,7 +177,7 @@ void viewExpenses() {
         cout << "\nID: " << exp.expenseID
              << "\nDate: " << exp.date
              << "\nCategory: " << exp.category
-             << "\nAmount: " << exp.amount
+             << "\nAmount: P" << fixed << setprecision(2) << exp.amount
              << "\nDescription: " << exp.description
              << "\n---------------------\n";
     }
@@ -163,7 +220,7 @@ void searchExpenses() {
             cout << "\nID: " << exp.expenseID
                  << "\nDate: " << exp.date
                  << "\nCategory: " << exp.category
-                 << "\nAmount: $" << fixed << setprecision(2) << exp.amount
+                 << "\nAmount: P" << fixed << setprecision(2) << exp.amount
                  << "\nDescription: " << exp.description
                  << "\n---------------------\n";
 
@@ -256,7 +313,7 @@ void deleteExpense() {
             cout << "\nID: " << it->expenseID
                  << "\nDate: " << it->date
                  << "\nCategory: " << it->category
-                 << "\nAmount: " << it->amount
+                 << "\nAmount: P" << fixed << setprecision(2) << it->amount
                  << "\nDescription: " << it->description
                  << "\n";
 
